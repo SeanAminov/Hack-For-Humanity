@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="grad3" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main cascade/branching path symbol -->
+  <!-- Central trunk that branches outward like a decision tree / water cascade -->
+
+  <!-- Top node - the starting point -->
+  <circle cx="256" cy="80" r="28" fill="url(#grad)"/>
+
+  <!-- First branch level -->
+  <path d="M256 108 L256 160 Q256 180 236 190 L170 220" stroke="url(#grad)" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M256 108 L256 160 Q256 180 276 190 L342 220" stroke="url(#grad)" stroke-width="12" stroke-linecap="round" fill="none"/>
+
+  <!-- Second level nodes -->
+  <circle cx="160" cy="228" r="20" fill="url(#grad2)"/>
+  <circle cx="352" cy="228" r="20" fill="url(#grad2)"/>
+
+  <!-- Second branch level - left side -->
+  <path d="M160 248 L160 280 Q160 300 140 310 L100 330" stroke="url(#grad2)" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M160 248 L160 280 Q160 300 180 310 L210 330" stroke="url(#grad2)" stroke-width="10" stroke-linecap="round" fill="none"/>
+
+  <!-- Second branch level - right side -->
+  <path d="M352 248 L352 280 Q352 300 332 310 L302 330" stroke="url(#grad2)" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <path d="M352 248 L352 280 Q352 300 372 310 L412 330" stroke="url(#grad2)" stroke-width="10" stroke-linecap="round" fill="none"/>
+
+  <!-- Third level nodes -->
+  <circle cx="92" cy="338" r="14" fill="url(#grad3)" opacity="0.85"/>
+  <circle cx="214" cy="338" r="14" fill="url(#grad3)" opacity="0.85"/>
+  <circle cx="298" cy="338" r="14" fill="url(#grad3)" opacity="0.85"/>
+  <circle cx="420" cy="338" r="14" fill="url(#grad3)" opacity="0.85"/>
+
+  <!-- Water/wave cascade effect at bottom -->
+  <path d="M60 390 Q120 370 160 390 Q200 410 240 390 Q280 370 320 390 Q360 410 400 390 Q440 370 460 390" stroke="url(#grad)" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <path d="M40 420 Q100 400 150 420 Q200 440 256 420 Q312 400 362 420 Q412 440 472 420" stroke="url(#grad2)" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M60 445 Q130 430 190 445 Q256 460 322 445 Q382 430 452 445" stroke="url(#grad3)" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.3"/>
+</svg>
