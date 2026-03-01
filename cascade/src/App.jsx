@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import useGameState from './hooks/useGameState';
-import ProfileSetup from './components/ProfileSetup';
-import DecisionInput from './components/DecisionInput';
-import GameBoard from './components/GameBoard';
-import Summary from './components/Summary';
+import LandingPage from './components/LandingPage';
+import EmergencyInput from './components/EmergencyInput';
+import Dashboard from './components/Dashboard';
 import LoadingScreen from './components/LoadingScreen';
-import HistoryDrawer from './components/HistoryDrawer';
+import { analyzeEmergency } from './services/ai';
 
-const pageTransition = {
+const PHASES = { LANDING: 'landing', INPUT: 'input', LOADING: 'loading', DASHBOARD: 'dashboard' };
+
+const transition = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -10 },
@@ -16,77 +16,73 @@ const pageTransition = {
 };
 
 export default function App() {
-  const game = useGameState();
-  const { phase, PHASES } = game;
-  const [showHistory, setShowHistory] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem('cascade-theme') || 'dark');
+  const [phase, setPhase] = useState(PHASES.LANDING);
+  const [emergency, setEmergency] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [error, setError] = useState(null);
+  const [updates, setUpdates] = useState([]);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light');
-  }, [theme]);
+  const handleStart = () => setPhase(PHASES.INPUT);
 
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    localStorage.setItem('cascade-theme', next);
+  const handleSubmit = async (data) => {
+    setEmergency(data);
+    setPhase(PHASES.LOADING);
+    setError(null);
+    try {
+      const result = await analyzeEmergency(data);
+      setAnalysis(result);
+      setPhase(PHASES.DASHBOARD);
+    } catch (err) {
+      setError(err.message);
+      setPhase(PHASES.INPUT);
+    }
+  };
+
+  const handleUpdate = async (updateText) => {
+    const newUpdates = [...updates, { text: updateText, time: new Date().toISOString() }];
+    setUpdates(newUpdates);
+    try {
+      const result = await analyzeEmergency({ ...emergency, updates: newUpdates });
+      setAnalysis(result);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleReset = () => {
+    setPhase(PHASES.LANDING);
+    setEmergency(null);
+    setAnalysis(null);
+    setError(null);
+    setUpdates([]);
   };
 
   return (
     <div className="min-h-screen relative">
-      <AnimatePresence>
-        {showHistory && <HistoryDrawer onClose={() => setShowHistory(false)} />}
-      </AnimatePresence>
-
       <AnimatePresence mode="wait">
-        {phase === PHASES.PROFILE && (
-          <motion.div key="profile" {...pageTransition}>
-            <ProfileSetup onSubmit={game.submitProfile} onShowHistory={() => setShowHistory(true)} />
+        {phase === PHASES.LANDING && (
+          <motion.div key="landing" {...transition}>
+            <LandingPage onStart={handleStart} />
           </motion.div>
         )}
-        {phase === PHASES.DECISION && (
-          <motion.div key="decision" {...pageTransition}>
-            <DecisionInput profile={game.profile} onSubmit={game.submitDecision} error={game.error} />
+        {phase === PHASES.INPUT && (
+          <motion.div key="input" {...transition}>
+            <EmergencyInput onSubmit={handleSubmit} error={error} onBack={handleReset} />
           </motion.div>
         )}
         {phase === PHASES.LOADING && (
-          <motion.div key="loading" {...pageTransition}>
-            <LoadingScreen round={game.currentRound} />
+          <motion.div key="loading" {...transition}>
+            <LoadingScreen />
           </motion.div>
         )}
-        {(phase === PHASES.PLAYING || phase === PHASES.CONSEQUENCE) && (
-          <motion.div key="game" {...pageTransition}>
-            <GameBoard
-              currentRound={game.currentRound}
-              totalRounds={game.totalRounds}
-              roundData={game.currentRoundData}
-              metrics={game.metrics}
-              history={game.history}
-              onChoice={game.makeChoice}
-              chosenOption={game.chosenOption}
-              onAdvance={game.advanceRound}
-              phase={phase}
-              error={game.error}
-              decision={game.decision}
-              theme={theme}
-              onToggleTheme={toggleTheme}
-              onShowHistory={() => setShowHistory(true)}
-            />
-          </motion.div>
-        )}
-        {phase === PHASES.SUMMARY_LOADING && (
-          <motion.div key="summary-loading" {...pageTransition}>
-            <LoadingScreen round="final" />
-          </motion.div>
-        )}
-        {phase === PHASES.SUMMARY && (
-          <motion.div key="summary" {...pageTransition}>
-            <Summary
-              summaryData={game.summaryData}
-              history={game.history}
-              metrics={game.metrics}
-              profile={game.profile}
-              decision={game.decision}
-              onRestart={game.restart}
+        {phase === PHASES.DASHBOARD && (
+          <motion.div key="dashboard" {...transition}>
+            <Dashboard
+              emergency={emergency}
+              analysis={analysis}
+              onUpdate={handleUpdate}
+              onReset={handleReset}
+              error={error}
             />
           </motion.div>
         )}

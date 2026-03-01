@@ -1,6 +1,6 @@
 /**
  * MapView — Dark-themed interactive map centered on San Jose / Santa Clara.
- * Uses Leaflet with dark CartoDB tiles for a Plague-Inc aesthetic.
+ * Uses Leaflet with dark CartoDB tiles.
  */
 
 import { useEffect, useRef, useState } from 'react';
