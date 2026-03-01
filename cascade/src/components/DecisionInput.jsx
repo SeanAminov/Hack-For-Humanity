@@ -2,122 +2,80 @@ import { motion } from 'framer-motion';
 
 const SCENARIOS = [
   {
-    title: 'The Startup Leap',
-    emoji: '\uD83D\uDE80',
-    description: 'Leave your stable job to build the startup you have been dreaming about.',
-    decision: 'Should I quit my job to start my own company? I have a solid idea, some savings, and a burning desire to be my own boss, but the risk of failure terrifies me.',
-    gradient: 'from-orange-400 to-red-500',
-    hoverGradient: 'from-orange-500 to-red-600',
+    title: 'Earthquake at SJSU',
+    emoji: '🌍',
+    description: 'A 6.2 magnitude earthquake strikes during class hours near San Jose State University.',
+    decision: 'A 6.2 magnitude earthquake has struck the San Jose area during peak class hours at SJSU. Multiple buildings report structural damage, there are reports of people trapped, and fires have broken out from ruptured gas lines near campus. The VTA light rail is halted and major highways are blocked by debris.',
   },
   {
-    title: 'The Big Move',
-    emoji: '\u2708\uFE0F',
-    description: 'Relocate across the country for a dream opportunity in a new city.',
-    decision: 'Should I move across the country for this amazing job opportunity? It pays more and aligns with my career goals, but I would leave behind my friends, family, and everything familiar.',
-    gradient: 'from-blue-400 to-cyan-500',
-    hoverGradient: 'from-blue-500 to-cyan-600',
+    title: 'Multi-Alarm Fire Near SCU',
+    emoji: '🔥',
+    description: 'A fast-moving wildfire threatens neighborhoods near Santa Clara University.',
+    decision: 'A brush fire near Santa Clara University has rapidly expanded due to strong winds, threatening residential neighborhoods and the university campus. Smoke is reducing visibility on US-101, and evacuation routes are becoming congested. Three fire stations are already engaged.',
   },
   {
-    title: 'Career Pivot',
-    emoji: '\uD83D\uDD04',
-    description: 'Go back to school and reinvent yourself in a completely new field.',
-    decision: 'Should I go back to school for a career change? I am unhappy in my current field and passionate about something new, but it means years of study and lost income.',
-    gradient: 'from-emerald-400 to-teal-500',
-    hoverGradient: 'from-emerald-500 to-teal-600',
+    title: 'Chemical Spill on I-280',
+    emoji: '☣️',
+    description: 'A tanker truck overturns, releasing toxic chemicals near a populated area.',
+    decision: 'A chemical tanker has overturned on I-280 near downtown San Jose, releasing an unknown toxic substance. A visible vapor cloud is drifting toward residential areas. Valley Medical Center is 2 miles downwind. Highway is completely blocked and morning commute traffic is at a standstill.',
   },
   {
-    title: 'Safe vs. Bold',
-    emoji: '\u2696\uFE0F',
-    description: 'Choose between a safe corporate job and a risky but exciting startup offer.',
-    decision: 'Should I take the safe corporate job with great benefits, or the risky startup offer that could either make me rich or leave me jobless in a year?',
-    gradient: 'from-purple-400 to-pink-500',
-    hoverGradient: 'from-purple-500 to-pink-600',
+    title: 'Active Shooter at Convention Center',
+    emoji: '🚨',
+    description: 'Reports of an active threat at the San Jose Convention Center during a major event.',
+    decision: 'Multiple 911 calls report an active shooter situation at the San Jose Convention Center during a tech conference with 3,000+ attendees. SJPD units are responding. There are reports of casualties and a stampede near the exits. The situation is chaotic with conflicting reports.',
   },
   {
-    title: 'All In on an Idea',
-    emoji: '\uD83D\uDC8E',
-    description: 'Invest your life savings into a business idea you truly believe in.',
-    decision: 'Should I invest my entire savings into a business idea I believe in? The market research looks promising, but putting everything on the line feels reckless.',
-    gradient: 'from-amber-400 to-yellow-500',
-    hoverGradient: 'from-amber-500 to-yellow-600',
+    title: 'Mass Casualty Accident',
+    emoji: '🚗',
+    description: 'A major multi-vehicle pileup on US-101 with dozens of casualties.',
+    decision: 'A massive multi-vehicle pileup involving 20+ vehicles has occurred on US-101 near SJC Airport. Early reports indicate at least 15 critically injured, multiple vehicles on fire, and jet fuel leaking from a damaged airport fuel tanker nearby. Both directions of US-101 are completely blocked.',
   },
   {
-    title: 'Follow Your Heart',
-    emoji: '\uD83C\uDFA8',
-    description: 'Pursue your creative passion instead of the practical, well-paying path.',
-    decision: 'Should I pursue my creative passion full-time instead of staying in my well-paying but soul-crushing corporate job? My art makes me happy but may never pay the bills.',
-    gradient: 'from-pink-400 to-rose-500',
-    hoverGradient: 'from-pink-500 to-rose-600',
+    title: 'Flood & Power Grid Failure',
+    emoji: '⚡',
+    description: 'Atmospheric river causes widespread flooding and knocks out the power grid.',
+    decision: 'An atmospheric river event has caused severe flooding across San Jose. Coyote Creek has breached its banks near downtown, flooding neighborhoods. The main power substation is underwater, leaving 200,000+ residents without power. Water rescue teams are overwhelmed with calls for help.',
   },
 ];
 
 export default function DecisionInput({ profile, onSubmit, error }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-2xl">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">
-            Playing as {profile?.name}, {profile?.age}
+      <div className="w-full max-w-lg">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
+          <p className="text-ink-3 text-xs tracking-wide mb-3">
+            {profile?.role} • {profile?.experience}
           </p>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Choose your scenario
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Pick a life decision to explore. We will simulate how it plays out.
-          </p>
+          <h2 className="text-xl font-semibold text-ink mb-2">Select Emergency Scenario</h2>
+          <p className="text-ink-2 text-sm">Choose a crisis. We'll simulate 5 phases of cascading consequences.</p>
         </motion.div>
 
         {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-600"
-          >
+          <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="mb-6 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-xs text-red-400">
             {error}
           </motion.div>
         )}
 
-        {/* Scenario Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-3">
           {SCENARIOS.map((scenario, i) => (
             <motion.button
               key={scenario.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.07, type: 'spring', stiffness: 300, damping: 25 }}
-              whileHover={{ scale: 1.03, y: -4 }}
-              whileTap={{ scale: 0.98 }}
+              transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => onSubmit(scenario.decision)}
-              className="relative glass-strong rounded-xl p-5 text-left cursor-pointer group transition-shadow hover:shadow-xl overflow-hidden"
+              className="w-full bg-panel border border-rule rounded-xl p-4 text-left cursor-pointer group transition-all card-glow"
             >
-              {/* Gradient accent bar on hover */}
-              <div
-                className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${scenario.gradient} opacity-0 group-hover:opacity-100 transition-opacity`}
-              />
-
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-4">
                 <span className="text-2xl">{scenario.emoji}</span>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1 group-hover:text-indigo-700 transition-colors">
-                    {scenario.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    {scenario.description}
-                  </p>
+                  <h3 className="text-sm font-semibold text-ink group-hover:text-blue-400 transition-colors">{scenario.title}</h3>
+                  <p className="text-xs text-ink-2 mt-0.5">{scenario.description}</p>
                 </div>
-
-                {/* Arrow icon */}
-                <svg
-                  className="w-4 h-4 text-gray-300 group-hover:text-indigo-400 transition-all group-hover:translate-x-0.5 shrink-0 mt-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
+                <svg className="w-4 h-4 text-ink-3 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
               </div>

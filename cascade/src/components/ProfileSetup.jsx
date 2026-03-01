@@ -1,232 +1,220 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const GOAL_OPTIONS = [
-  { label: 'Financial Freedom', emoji: '\uD83D\uDCB0' },
-  { label: 'Start a Business', emoji: '\uD83D\uDE80' },
-  { label: 'Find Purpose', emoji: '\uD83E\uDDED' },
-  { label: 'Career Growth', emoji: '\uD83D\uDCC8' },
-  { label: 'Work-Life Balance', emoji: '\u2696\uFE0F' },
-  { label: 'Make an Impact', emoji: '\uD83C\uDF0D' },
-  { label: 'Build Wealth', emoji: '\uD83D\uDC8E' },
-  { label: 'Creative Fulfillment', emoji: '\uD83C\uDFA8' },
-  { label: 'Strong Relationships', emoji: '\u2764\uFE0F' },
-  { label: 'Location Independence', emoji: '\u2708\uFE0F' },
+const ROLE_OPTIONS = [
+  { value: 'Incident Commander', emoji: '🎖️', desc: 'Lead the overall emergency response' },
+  { value: 'Fire Chief', emoji: '🚒', desc: 'Manage fire and rescue operations' },
+  { value: 'Police Captain', emoji: '🚔', desc: 'Handle law enforcement and security' },
+  { value: 'EMS Coordinator', emoji: '🚑', desc: 'Coordinate medical response and triage' },
+  { value: 'Emergency Manager', emoji: '📋', desc: 'Oversee planning and resource allocation' },
 ];
 
-const RISK_LABELS = {
-  1: 'Very Cautious',
-  2: 'Cautious',
-  3: 'Balanced',
-  4: 'Bold',
-  5: 'Very Bold',
-};
+const EXPERIENCE_OPTIONS = [
+  { value: 'Junior', label: 'Junior', desc: '0-3 years experience' },
+  { value: 'Intermediate', label: 'Intermediate', desc: '3-8 years experience' },
+  { value: 'Senior', label: 'Senior', desc: '8-15 years experience' },
+  { value: 'Veteran', label: 'Veteran', desc: '15+ years experience' },
+];
 
-const RISK_EMOJIS = {
-  1: '\uD83D\uDC22',
-  2: '\uD83D\uDC3F\uFE0F',
-  3: '\u2696\uFE0F',
-  4: '\u26A1',
-  5: '\uD83D\uDD25',
+const FOCUS_OPTIONS = [
+  { label: 'Save Lives First', emoji: '❤️' },
+  { label: 'Contain the Situation', emoji: '🛑' },
+  { label: 'Protect Infrastructure', emoji: '🏗️' },
+  { label: 'Public Communication', emoji: '📡' },
+  { label: 'Resource Efficiency', emoji: '📊' },
+  { label: 'Inter-Agency Coordination', emoji: '🤝' },
+];
+
+const TOTAL_STEPS = 3;
+
+const slideIn = {
+  initial: { opacity: 0, x: 40 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -40 },
+  transition: { type: 'spring', stiffness: 300, damping: 30 },
 };
 
 export default function ProfileSetup({ onSubmit, onShowHistory }) {
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [location, setLocation] = useState('');
-  const [situation, setSituation] = useState('');
-  const [goals, setGoals] = useState([]);
-  const [riskTolerance, setRiskTolerance] = useState(3);
+  const [step, setStep] = useState(0);
+  const [role, setRole] = useState('');
+  const [experience, setExperience] = useState('');
+  const [agency, setAgency] = useState('');
+  const [focus, setFocus] = useState('');
 
-  const toggleGoal = (goal) => {
-    setGoals((prev) =>
-      prev.includes(goal)
-        ? prev.filter((g) => g !== goal)
-        : prev.length < 3
-          ? [...prev, goal]
-          : prev
-    );
+  const canAdvance = () => {
+    if (step === 0) return role;
+    if (step === 1) return experience;
+    if (step === 2) return focus;
+    return false;
   };
 
-  const canSubmit = name && age && location && situation && goals.length >= 1;
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!canSubmit) return;
-    onSubmit({
-      name,
-      age,
-      location,
-      situation,
-      goals,
-      riskTolerance: RISK_LABELS[riskTolerance],
-    });
+  const advance = () => {
+    if (!canAdvance()) return;
+    if (step < TOTAL_STEPS - 1) {
+      setStep(step + 1);
+    } else {
+      onSubmit({
+        name: role,
+        role,
+        experience,
+        agency: agency || 'San Jose Emergency Services',
+        focus,
+        goals: [focus],
+        age: '35',
+        location: 'San Jose, CA',
+        situation: `${role} with ${experience} experience`,
+        riskTolerance: experience === 'Veteran' ? 'Bold' : experience === 'Senior' ? 'Balanced' : 'Cautious',
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-lg">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-center mb-10"
-        >
-          <div className="inline-flex items-center gap-2 mb-3">
-            <img src="/cascade-logo.svg" alt="Cascade logo" className="w-12 h-12" />
-            <h1 className="text-4xl font-bold tracking-tight gradient-text">
-              CASCADE
-            </h1>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+          <div className="inline-flex items-center gap-2.5 mb-2">
+            <img src="/cascade-logo.svg" alt="Cascade" className="w-10 h-10" />
+            <h1 className="text-3xl font-bold tracking-tight gradient-text">CASCADE</h1>
           </div>
-          <p className="text-gray-500 text-sm">
-            See the future before you decide.
-          </p>
+          <p className="text-ink-3 text-xs tracking-wide">Emergency Response Training Simulator</p>
         </motion.div>
 
-        {/* Form */}
-        <motion.form
-          onSubmit={handleSubmit}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="space-y-5"
-        >
-          {/* Name + Age row */}
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <label className="block text-xs text-gray-500 mb-1.5 uppercase tracking-wider">Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Alex"
-                className="w-full glass-strong rounded-lg px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
-              />
-            </div>
-            <div className="w-24">
-              <label className="block text-xs text-gray-500 mb-1.5 uppercase tracking-wider">Age</label>
-              <input
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                placeholder="22"
-                min="16"
-                max="80"
-                className="w-full glass-strong rounded-lg px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
-              />
-            </div>
-          </div>
-
-          {/* Location */}
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5 uppercase tracking-wider">Location</label>
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="San Jose, CA"
-              className="w-full glass-strong rounded-lg px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all"
+        {/* Progress */}
+        <div className="flex justify-center gap-2 mb-10">
+          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+            <motion.div
+              key={i}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === step ? 'w-8 bg-blue-500' : i < step ? 'w-1.5 bg-blue-500/60' : 'w-1.5 bg-rule-2'
+              }`}
+              layout
             />
-          </div>
+          ))}
+        </div>
 
-          {/* Situation */}
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5 uppercase tracking-wider">Current Situation</label>
-            <textarea
-              value={situation}
-              onChange={(e) => setSituation(e.target.value)}
-              placeholder="Junior developer at a tech startup, $45K salary, $30K in student loans, living with roommates..."
-              rows={3}
-              className="w-full glass-strong rounded-lg px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all resize-none"
-            />
-          </div>
+        <div className="min-h-[320px] flex flex-col">
+          <AnimatePresence mode="wait">
+            {/* Step 0: Role */}
+            {step === 0 && (
+              <motion.div key="step-0" {...slideIn} className="flex-1">
+                <p className="text-lg font-semibold text-ink mb-1">Choose your role</p>
+                <p className="text-sm text-ink-2 mb-6">What position are you taking in this emergency?</p>
+                <div className="space-y-2.5">
+                  {ROLE_OPTIONS.map((opt) => (
+                    <motion.button
+                      key={opt.value}
+                      onClick={() => setRole(opt.value)}
+                      whileHover={{ scale: 1.015 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`w-full text-left p-4 rounded-xl transition-all cursor-pointer flex items-center gap-4 border ${
+                        role === opt.value
+                          ? 'bg-panel-2 border-blue-500/50 ring-1 ring-blue-500/30'
+                          : 'bg-panel border-rule hover:border-rule-2'
+                      }`}
+                    >
+                      <span className="text-2xl">{opt.emoji}</span>
+                      <div>
+                        <p className={`text-sm font-semibold ${role === opt.value ? 'text-blue-400' : 'text-ink'}`}>{opt.value}</p>
+                        <p className="text-xs text-ink-2">{opt.desc}</p>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
-          {/* Goals */}
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5 uppercase tracking-wider">
-              Life Goals <span className="text-gray-400">({goals.length}/3)</span>
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {GOAL_OPTIONS.map((goal) => (
-                <button
-                  key={goal.label}
-                  type="button"
-                  onClick={() => toggleGoal(goal.label)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                    goals.includes(goal.label)
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md'
-                      : 'glass text-gray-600 hover:shadow-md hover:text-indigo-600'
-                  }`}
-                >
-                  {goal.emoji} {goal.label}
-                </button>
-              ))}
-            </div>
-          </div>
+            {/* Step 1: Experience */}
+            {step === 1 && (
+              <motion.div key="step-1" {...slideIn} className="flex-1">
+                <p className="text-lg font-semibold text-ink mb-1">Experience level</p>
+                <p className="text-sm text-ink-2 mb-6">This affects your starting capabilities and metrics.</p>
+                <div className="space-y-2.5">
+                  {EXPERIENCE_OPTIONS.map((opt) => (
+                    <motion.button
+                      key={opt.value}
+                      onClick={() => setExperience(opt.value)}
+                      whileHover={{ scale: 1.015 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`w-full text-left p-4 rounded-xl transition-all cursor-pointer border ${
+                        experience === opt.value
+                          ? 'bg-panel-2 border-blue-500/50 ring-1 ring-blue-500/30'
+                          : 'bg-panel border-rule hover:border-rule-2'
+                      }`}
+                    >
+                      <p className={`text-sm font-semibold ${experience === opt.value ? 'text-blue-400' : 'text-ink'}`}>{opt.label}</p>
+                      <p className="text-xs text-ink-2">{opt.desc}</p>
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
-          {/* Risk Tolerance */}
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5 uppercase tracking-wider">
-              Risk Tolerance: <span className="text-gray-800 font-medium">{RISK_EMOJIS[riskTolerance]} {RISK_LABELS[riskTolerance]}</span>
-            </label>
-            <input
-              type="range"
-              min="1"
-              max="5"
-              value={riskTolerance}
-              onChange={(e) => setRiskTolerance(Number(e.target.value))}
-              className="w-full accent-indigo-500 cursor-pointer"
-            />
-            <div className="flex justify-between text-[10px] text-gray-400 mt-1">
-              <span>{RISK_EMOJIS[1]} Cautious</span>
-              <span>Bold {RISK_EMOJIS[5]}</span>
-            </div>
-          </div>
+            {/* Step 2: Focus */}
+            {step === 2 && (
+              <motion.div key="step-2" {...slideIn} className="flex-1">
+                <p className="text-lg font-semibold text-ink mb-1">What's your priority?</p>
+                <p className="text-sm text-ink-2 mb-6">This shapes how the AI evaluates your decisions.</p>
+                <div className="flex flex-wrap gap-2.5">
+                  {FOCUS_OPTIONS.map((opt) => (
+                    <motion.button
+                      key={opt.label}
+                      onClick={() => setFocus(opt.label)}
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                      className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer border ${
+                        focus === opt.label
+                          ? 'bg-blue-600 text-white border-transparent'
+                          : 'bg-panel border-rule-2 text-ink-2 hover:border-blue-500/30'
+                      }`}
+                    >
+                      {opt.emoji} {opt.label}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
-          {/* AI Transparency Notice */}
-          <div className="glass rounded-lg p-3">
-            <div className="flex items-start gap-2">
-              <svg className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        {/* Actions */}
+        <div className="mt-8 space-y-4">
+          {step === TOTAL_STEPS - 1 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start gap-2 text-[10px] text-ink-3 leading-relaxed">
+              <svg className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
               </svg>
-              <div>
-                <p className="text-[11px] font-medium text-gray-700 mb-0.5">Responsible AI</p>
-                <p className="text-[10px] text-gray-500 leading-relaxed">
-                  Cascade uses AI to generate personalized scenarios. Your profile data is sent to the AI model
-                  but is not stored beyond this session. All content is checked for safety, bias, and factual
-                  accuracy in real-time. No real financial advice is given.
-                </p>
-              </div>
-            </div>
+              <span>Powered by AMD MI300X. All scenarios use publicly available emergency data. AI responses checked for safety and accuracy.</span>
+            </motion.div>
+          )}
+
+          <div className="flex gap-3">
+            {step > 0 && (
+              <button onClick={() => setStep(step - 1)} className="px-5 py-3 rounded-xl text-sm font-medium text-ink-2 hover:text-ink hover:bg-panel-2 transition-all cursor-pointer">
+                Back
+              </button>
+            )}
+            <motion.button
+              onClick={advance}
+              disabled={!canAdvance()}
+              whileHover={canAdvance() ? { scale: 1.01 } : {}}
+              whileTap={canAdvance() ? { scale: 0.99 } : {}}
+              className={`flex-1 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
+                canAdvance() ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-panel-2 text-ink-3 cursor-not-allowed'
+              }`}
+            >
+              {step < TOTAL_STEPS - 1 ? 'Continue' : 'Start Simulation'}
+            </motion.button>
           </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={`w-full py-3 rounded-lg text-sm font-semibold transition-all cursor-pointer ${
-              canSubmit
-                ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99]'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }`}
-          >
-            Continue
-          </button>
-
-          {/* View past playthroughs link */}
-          {onShowHistory && (
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={onShowHistory}
-                className="text-xs text-indigo-400 hover:text-indigo-600 transition-colors cursor-pointer"
-              >
-                View past playthroughs
+          {step === 0 && onShowHistory && (
+            <div className="text-center pt-2">
+              <button onClick={onShowHistory} className="text-xs text-ink-3 hover:text-ink transition-colors cursor-pointer">
+                View past simulations →
               </button>
             </div>
           )}
-        </motion.form>
+        </div>
       </div>
     </div>
   );

@@ -1,11 +1,8 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import {
   ReactFlow,
   Background,
   Controls,
-  useNodesState,
-  useEdgesState,
-  useReactFlow,
   ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -36,11 +33,8 @@ function TreeInner({ history, currentRound, decision }) {
       maxZoom={1.5}
       proOptions={{ hideAttribution: true }}
     >
-      <Background color="#1a1a1a" gap={20} size={1} />
-      <Controls
-        showInteractive={false}
-        className="!bg-[#18181B] !border-[#27272A] !shadow-none"
-      />
+      <Background color="rgba(59,130,246,0.06)" gap={20} size={1} />
+      <Controls showInteractive={false} />
     </ReactFlow>
   );
 }

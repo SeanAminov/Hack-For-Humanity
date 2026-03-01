@@ -6,7 +6,6 @@ export function buildTreeData(history, currentRound, decision) {
   const nodes = [];
   const edges = [];
 
-  // Root node: the decision
   nodes.push({
     id: 'root',
     type: 'cascadeNode',
@@ -55,14 +54,13 @@ export function buildTreeData(history, currentRound, decision) {
         target: nodeId,
         type: 'smoothstep',
         style: {
-          stroke: isChosen ? '#6366f1' : '#d1d5db',
+          stroke: isChosen ? 'var(--color-accent)' : 'var(--color-rule-2)',
           strokeWidth: isChosen ? 2 : 1,
           strokeDasharray: isChosen ? undefined : '5 5',
         },
         animated: isChosen,
       });
     }
-
     yOffset += 130;
   }
 
