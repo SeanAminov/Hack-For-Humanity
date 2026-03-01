@@ -1,22 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
     <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6366f1"/>
-      <stop offset="100%" stop-color="#8b5cf6"/>
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
     </linearGradient>
   </defs>
-  <!-- Compact branching cascade icon -->
-  <circle cx="32" cy="10" r="5" fill="url(#fg)"/>
-  <path d="M32 15 L32 22 Q32 26 28 28 L18 34" stroke="url(#fg)" stroke-width="3" stroke-linecap="round" fill="none"/>
-  <path d="M32 15 L32 22 Q32 26 36 28 L46 34" stroke="url(#fg)" stroke-width="3" stroke-linecap="round" fill="none"/>
-  <circle cx="16" cy="36" r="3.5" fill="url(#fg)" opacity="0.8"/>
-  <circle cx="48" cy="36" r="3.5" fill="url(#fg)" opacity="0.8"/>
-  <path d="M16 39.5 L16 43 Q16 46 13 47.5 L8 50" stroke="url(#fg)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7"/>
-  <path d="M16 39.5 L16 43 Q16 46 19 47.5 L24 50" stroke="url(#fg)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7"/>
-  <path d="M48 39.5 L48 43 Q48 46 45 47.5 L40 50" stroke="url(#fg)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7"/>
-  <path d="M48 39.5 L48 43 Q48 46 51 47.5 L56 50" stroke="url(#fg)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7"/>
-  <circle cx="7" cy="52" r="2.5" fill="url(#fg)" opacity="0.6"/>
-  <circle cx="25" cy="52" r="2.5" fill="url(#fg)" opacity="0.6"/>
-  <circle cx="39" cy="52" r="2.5" fill="url(#fg)" opacity="0.6"/>
-  <circle cx="57" cy="52" r="2.5" fill="url(#fg)" opacity="0.6"/>
+  <!-- Shield -->
+  <path d="M32 6 L54 16 Q56 17 56 19 L56 34 Q56 46 32 58 Q8 46 8 34 L8 19 Q8 17 10 16 Z" fill="url(#fg)" opacity="0.9"/>
+  <!-- Location pin -->
+  <path d="M32 18 Q40 18 40 26 Q40 32 32 40 Q24 32 24 26 Q24 18 32 18 Z" fill="white" opacity="0.95"/>
+  <!-- Cross in pin -->
+  <rect x="30" y="23" width="4" height="8" rx="1" fill="#ef4444"/>
+  <rect x="28" y="25" width="8" height="4" rx="1" fill="#ef4444"/>
 </svg>

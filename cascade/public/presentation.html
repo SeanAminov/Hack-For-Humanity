@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASCADE — Hack For Humanity 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #09090B;
+    --card: #18181B;
+    --border: #27272A;
+    --text: #FAFAFA;
+    --text2: #A1A1AA;
+    --text3: #71717A;
+    --red: #EF4444;
+    --red-dim: #991B1B;
+    --blue: #3B82F6;
+    --emerald: #10B981;
+    --amber: #F59E0B;
+    --violet: #8B5CF6;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .slides {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .slide.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  /* Slide counter */
+  .counter {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    font-size: 12px;
+    color: var(--text3);
+    z-index: 100;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nav-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 32px;
+    font-size: 11px;
+    color: var(--text3);
+    z-index: 100;
+    opacity: 0.5;
+  }
+
+  /* Typography */
+  h1 { font-size: 64px; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+  h2 { font-size: 44px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+  h3 { font-size: 28px; font-weight: 600; line-height: 1.3; }
+  p { font-size: 20px; line-height: 1.6; color: var(--text2); }
+  .small { font-size: 16px; }
+  .tag { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--red), #f87171);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Layout helpers */
+  .center { text-align: center; }
+  .left { text-align: left; align-items: flex-start; }
+  .gap-sm { gap: 16px; }
+  .gap-md { gap: 24px; }
+  .gap-lg { gap: 40px; }
+  .mt-sm { margin-top: 16px; }
+  .mt-md { margin-top: 28px; }
+  .mt-lg { margin-top: 48px; }
+  .max-w { max-width: 900px; }
+
+  .row { display: flex; align-items: center; }
+  .col { display: flex; flex-direction: column; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; max-width: 900px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: left;
+  }
+  .card h3 { font-size: 20px; margin-bottom: 10px; }
+  .card p { font-size: 15px; line-height: 1.6; }
+
+  .card-accent {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), transparent);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+  .badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* Metric bar */
+  .metric {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+  }
+  .metric-label { font-size: 15px; color: var(--text2); min-width: 180px; }
+  .metric-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .metric-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .metric-value { font-size: 14px; font-weight: 600; min-width: 60px; text-align: right; }
+
+  /* List */
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 18px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  .feature-list li::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  /* Architecture diagram */
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .arch-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 28px;
+    text-align: center;
+  }
+  .arch-box h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .arch-box p { font-size: 13px; color: var(--text3); }
+  .arch-arrow { color: var(--text3); font-size: 24px; }
+
+  /* Team */
+  .team-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+  }
+  .team-card .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--red), #f87171);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 auto 12px;
+  }
+  .team-card h4 { font-size: 18px; font-weight: 600; }
+  .team-card p { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+  /* Divider */
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: var(--red);
+    border-radius: 2px;
+    margin: 16px 0;
+  }
+
+  /* Prize targets */
+  .prize {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    color: var(--text2);
+  }
+  .prize-icon {
+    font-size: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slides" id="slides">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide active center col gap-md" id="s1">
+    <div class="tag" style="color: var(--red);">Hack For Humanity 2026</div>
+    <h1><span class="gradient-text">CASCADE</span></h1>
+    <p class="max-w">AI-Powered Emergency Response Analysis</p>
+    <div class="row gap-sm mt-md">
+      <div class="badge"><span class="dot" style="background: var(--emerald);"></span> Responsible AI</div>
+      <div class="badge"><span class="dot" style="background: var(--blue);"></span> Public Data Only</div>
+      <div class="badge"><span class="dot" style="background: var(--amber);"></span> AMD MI300X</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: The Problem -->
+  <div class="slide center col gap-md" id="s2">
+    <div class="tag" style="color: var(--red);">The Problem</div>
+    <h2>In an emergency, every<br>second counts</h2>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <div class="grid-3 mt-md">
+      <div class="card">
+        <h3 style="font-size:32px; margin-bottom: 4px;">60%</h3>
+        <p>of people don't know their nearest emergency resources</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:32px; margin-bottom: 4px;">4:26</h3>
+        <p>average 911 response time in urban areas (minutes)</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:32px; margin-bottom: 4px;">83%</h3>
+        <p>of people feel unprepared for natural disasters (FEMA)</p>
+      </div>
+    </div>
+    <p class="small mt-md" style="max-width: 700px;">People need instant, location-aware guidance during emergencies &mdash; before first responders arrive.</p>
+  </div>
+
+  <!-- SLIDE 3: The Solution -->
+  <div class="slide center col gap-md" id="s3">
+    <div class="tag" style="color: var(--emerald);">The Solution</div>
+    <h2>Real-time AI emergency<br>analysis &amp; guidance</h2>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <ul class="feature-list mt-md max-w" style="text-align: left;">
+      <li>Describe any emergency &mdash; fire, earthquake, flood, chemical spill, and more</li>
+      <li>Get instant, actionable guidance: what to do NOW, safety warnings, evacuation routes</li>
+      <li>See nearby resources on a live map: hospitals, fire stations, shelters, police</li>
+      <li>Update the situation as it evolves and get refreshed analysis in real time</li>
+      <li>All powered by publicly available data &mdash; real protocols, real resources, real locations</li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 4: How It Works -->
+  <div class="slide center col gap-md" id="s4">
+    <div class="tag" style="color: var(--blue);">How It Works</div>
+    <h2>Three steps to safety</h2>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <div class="grid-3 mt-md">
+      <div class="card card-accent">
+        <div style="font-size: 36px; margin-bottom: 12px;">1</div>
+        <h3>Report</h3>
+        <p>Select emergency type, enter your location, and describe what's happening</p>
+      </div>
+      <div class="card card-accent">
+        <div style="font-size: 36px; margin-bottom: 12px;">2</div>
+        <h3>Analyze</h3>
+        <p>AI processes your report against real emergency protocols and local resources</p>
+      </div>
+      <div class="card card-accent">
+        <div style="font-size: 36px; margin-bottom: 12px;">3</div>
+        <h3>Act</h3>
+        <p>Get immediate actions, safety warnings, map of resources, and evacuation routes</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Tech Architecture -->
+  <div class="slide center col gap-md" id="s5">
+    <div class="tag" style="color: var(--amber);">Architecture</div>
+    <h2>Built on AMD MI300X</h2>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <div class="arch-flow">
+      <div class="arch-box">
+        <h4>React Frontend</h4>
+        <p>Vite + Tailwind + Leaflet</p>
+      </div>
+      <span class="arch-arrow">&rarr;</span>
+      <div class="arch-box" style="border-color: rgba(239,68,68,0.3);">
+        <h4 style="color: var(--red);">vLLM API</h4>
+        <p>OpenAI-compatible endpoint</p>
+      </div>
+      <span class="arch-arrow">&rarr;</span>
+      <div class="arch-box" style="border-color: rgba(245,158,11,0.3);">
+        <h4 style="color: var(--amber);">AMD MI300X</h4>
+        <p>192GB HBM3 &bull; Llama 3.1 70B</p>
+      </div>
+    </div>
+    <div class="grid-2 mt-lg" style="max-width: 800px;">
+      <div class="card">
+        <h3>70B Parameters</h3>
+        <p>Meta Llama 3.1 70B Instruct for nuanced emergency understanding</p>
+      </div>
+      <div class="card">
+        <h3>No Backend Server</h3>
+        <p>Frontend calls vLLM directly &mdash; minimal latency, simple deployment</p>
+      </div>
+      <div class="card">
+        <h3>Responsible AI</h3>
+        <p>Built-in guardrails: content safety, bias detection, factual grounding checks</p>
+      </div>
+      <div class="card">
+        <h3>Real Public Data</h3>
+        <p>Actual hospitals, fire stations, police, protocols &mdash; no made-up resources</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Responsible AI -->
+  <div class="slide center col gap-md" id="s6">
+    <div class="tag" style="color: var(--emerald);">Responsible AI</div>
+    <h2>Safety at every layer</h2>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <div class="grid-3 mt-md">
+      <div class="card">
+        <div style="font-size: 28px; margin-bottom: 12px;">&#x1F6E1;&#xFE0F;</div>
+        <h3>Content Safety</h3>
+        <p>Scans all AI output for harmful content, panic-inducing language, and misinformation</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 28px; margin-bottom: 12px;">&#x2696;&#xFE0F;</div>
+        <h3>Bias Detection</h3>
+        <p>Checks for demographic bias in resource allocation and action recommendations</p>
+      </div>
+      <div class="card">
+        <div style="font-size: 28px; margin-bottom: 12px;">&#x1F4CA;</div>
+        <h3>Factual Grounding</h3>
+        <p>Scores how well AI guidance aligns with established emergency protocols</p>
+      </div>
+    </div>
+    <div class="card mt-md max-w" style="text-align: center;">
+      <p>Every analysis displays a transparent <strong style="color: var(--emerald);">AI Verified</strong> badge that users can expand to see the full Responsible AI Report &mdash; content safety status, bias check, and grounding score.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Live Demo -->
+  <div class="slide center col gap-lg" id="s7">
+    <div class="tag" style="color: var(--red);">Live Demo</div>
+    <h1 class="gradient-text">Let's see it<br>in action</h1>
+    <p>Fire emergency near SJSU campus</p>
+  </div>
+
+  <!-- SLIDE 8: Impact -->
+  <div class="slide center col gap-md" id="s8">
+    <div class="tag" style="color: var(--emerald);">Impact</div>
+    <h2>Empowering communities<br>in crisis</h2>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <div class="grid-2 mt-md" style="max-width: 800px;">
+      <div class="card card-accent">
+        <h3>&#x23F1;&#xFE0F; Faster Response</h3>
+        <p>Instant AI guidance bridges the gap before emergency services arrive</p>
+      </div>
+      <div class="card card-accent">
+        <h3>&#x1F4CD; Location-Aware</h3>
+        <p>Real resources, real addresses, real distances &mdash; specific to where you are</p>
+      </div>
+      <div class="card card-accent">
+        <h3>&#x267B;&#xFE0F; Evolving Analysis</h3>
+        <p>Update the situation and get refreshed guidance as conditions change</p>
+      </div>
+      <div class="card card-accent">
+        <h3>&#x1F310; Accessible</h3>
+        <p>Web-based, no app install needed. Works on any device with a browser</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Future Vision -->
+  <div class="slide center col gap-md" id="s9">
+    <div class="tag" style="color: var(--violet);">What's Next</div>
+    <h2>Future roadmap</h2>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <ul class="feature-list mt-md max-w" style="text-align: left;">
+      <li>GPS auto-detection for automatic location awareness</li>
+      <li>Real-time data feeds from USGS, NWS, CAL FIRE, traffic APIs</li>
+      <li>Push notifications and community-wide alerts</li>
+      <li>Multi-language support for diverse communities</li>
+      <li>Integration with official emergency management systems</li>
+      <li>Offline mode with cached local emergency data</li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 10: Thank You -->
+  <div class="slide center col gap-md" id="s10">
+    <h1><span class="gradient-text">CASCADE</span></h1>
+    <p>AI-Powered Emergency Response Analysis</p>
+    <div class="divider" style="margin: 8px auto;"></div>
+    <div class="row gap-sm mt-md">
+      <div class="badge"><span class="dot" style="background: var(--emerald);"></span> Responsible AI</div>
+      <div class="badge"><span class="dot" style="background: var(--blue);"></span> Public Data Only</div>
+      <div class="badge"><span class="dot" style="background: var(--amber);"></span> AMD MI300X</div>
+    </div>
+    <p class="small mt-lg" style="color: var(--text3);">Hack For Humanity 2026 &bull; Santa Clara University</p>
+    <p class="small" style="color: var(--text3);">github.com/SeanAminov/Hack-For-Humanity</p>
+  </div>
+
+</div>
+
+<!-- Slide counter -->
+<div class="counter"><span id="current">1</span> / <span id="total">10</span></div>
+<div class="nav-hint">&#8592; &#8594; Arrow keys to navigate</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const currentEl = document.getElementById('current');
+  let current = 0;
+
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    current = ((n % slides.length) + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    currentEl.textContent = current + 1;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); showSlide(current + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); showSlide(current - 1); }
+    if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+    if (e.key === 'End') { e.preventDefault(); showSlide(slides.length - 1); }
+  });
+
+  // Click navigation
+  document.addEventListener('click', (e) => {
+    if (e.clientX > window.innerWidth / 2) showSlide(current + 1);
+    else showSlide(current - 1);
+  });
+</script>
+
+</body>
+</html>
