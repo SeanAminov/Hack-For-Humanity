@@ -48,13 +48,21 @@ export default function Dashboard({ emergency, analysis, onUpdate, onReset, erro
       }));
   }, [analysis]);
 
+  const [updateError, setUpdateError] = useState(null);
+
   const handleSendUpdate = async () => {
     if (!updateText.trim() || updating) return;
     setUpdating(true);
-    await onUpdate(updateText.trim());
-    setUpdateText('');
-    setShowUpdate(false);
-    setUpdating(false);
+    setUpdateError(null);
+    try {
+      await onUpdate(updateText.trim());
+      setUpdateText('');
+      setShowUpdate(false);
+    } catch (err) {
+      setUpdateError(err.message || 'Failed to update. Try again.');
+    } finally {
+      setUpdating(false);
+    }
   };
 
   const threatLevel = analysis?.threat_level || 'moderate';
@@ -100,22 +108,26 @@ export default function Dashboard({ emergency, analysis, onUpdate, onReset, erro
             className="absolute top-14 left-4 right-4 z-[1000] bg-black/80 backdrop-blur-md rounded-xl border border-white/10 p-4"
           >
             <p className="text-[11px] text-white/50 mb-2">What's changed? Add new information.</p>
+            {updateError && (
+              <p className="text-xs text-red-400 mb-2">{updateError}</p>
+            )}
             <div className="flex gap-2">
               <input
                 type="text"
                 value={updateText}
                 onChange={(e) => setUpdateText(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendUpdate()}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !updating && updateText.trim()) { e.preventDefault(); handleSendUpdate(); } }}
                 placeholder="e.g. Fire is spreading east, road now blocked on 10th St..."
                 className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/20 transition-colors"
                 autoFocus
+                disabled={updating}
               />
               <button
                 onClick={handleSendUpdate}
                 disabled={!updateText.trim() || updating}
-                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium cursor-pointer transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium cursor-pointer transition-colors disabled:opacity-50 min-w-[80px]"
               >
-                {updating ? '...' : 'Send'}
+                {updating ? 'Analyzing...' : 'Send'}
               </button>
             </div>
           </motion.div>
@@ -272,6 +284,32 @@ export default function Dashboard({ emergency, analysis, onUpdate, onReset, erro
           <p className="text-[11px] text-white/60">{emergency?.location}</p>
         </div>
       </div>
+
+      {/* Re-analyzing overlay */}
+      <AnimatePresence>
+        {updating && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[999] bg-black/40 backdrop-blur-[2px] flex items-center justify-center pointer-events-none"
+          >
+            <div className="bg-black/80 backdrop-blur-md rounded-xl border border-white/10 px-6 py-4 flex items-center gap-3">
+              <div className="flex gap-1.5">
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-2 h-2 rounded-full bg-red-500"
+                    animate={{ scale: [1, 1.4, 1], opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.2, ease: 'easeInOut' }}
+                  />
+                ))}
+              </div>
+              <p className="text-sm text-white/70">Re-analyzing situation...</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {error && (
         <div className="absolute bottom-4 right-4 z-[1000] bg-red-500/20 backdrop-blur-sm border border-red-500/30 rounded-lg px-4 py-2">

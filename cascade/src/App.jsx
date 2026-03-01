@@ -41,12 +41,9 @@ export default function App() {
   const handleUpdate = async (updateText) => {
     const newUpdates = [...updates, { text: updateText, time: new Date().toISOString() }];
     setUpdates(newUpdates);
-    try {
-      const result = await analyzeEmergency({ ...emergency, updates: newUpdates });
-      setAnalysis(result);
-    } catch (err) {
-      setError(err.message);
-    }
+    setError(null);
+    const result = await analyzeEmergency({ ...emergency, updates: newUpdates });
+    setAnalysis(result);
   };
 
   const handleReset = () => {
